@@ -3,6 +3,7 @@ import { Layout } from "@/components/layout/Layout"
 import { LogViewer } from "@/components/LogViewer"
 import { Snapshots } from "@/pages/Snapshots"
 import { Devices } from "@/pages/Devices"
+import { Tests } from "@/pages/Tests"
 
 function Dashboard() {
   return (
@@ -80,6 +81,7 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/snapshots" element={<Snapshots />} />
         <Route path="/devices" element={<Devices />} />
+        <Route path="/tests" element={<Tests />} />
       </Routes>
     </Layout>
   )

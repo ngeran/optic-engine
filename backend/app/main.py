@@ -6,7 +6,7 @@ import logging
 
 from .core.config import settings
 from .core.logging import setup_logging
-from .api.routes import health, snapshots, tests, websocket, devices
+from .api.routes import health, snapshots, tests, testfiles, websocket, devices
 
 # Setup logging
 setup_logging()
@@ -51,6 +51,7 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(snapshots.router)
 app.include_router(tests.router)
+app.include_router(testfiles.router)
 app.include_router(websocket.router)
 app.include_router(devices.router)
 
