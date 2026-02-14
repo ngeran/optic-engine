@@ -51,7 +51,7 @@ export function Tests() {
   }
 
   const handleDelete = async (filename: string) => {
-    if (!confirm(\`Are you sure you want to delete \${filename}?\`)) {
+    if (!confirm(`Are you sure you want to delete ${filename}?`)) {
       return
     }
     try {
@@ -103,7 +103,7 @@ export function Tests() {
           onClick={fetchTests}
           className="flex items-center space-x-2 px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg transition-colors text-foreground"
         >
-          <RefreshCw className={\`w-4 h-4 \${loading ? 'animate-spin' : ''}\`} />
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           <span>Refresh</span>
         </button>
       </div>
