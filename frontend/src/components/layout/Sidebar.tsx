@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 interface SidebarProps {
   isOpen: boolean
   onToggle: () => void
@@ -5,7 +7,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const menuItems = [
-    { name: 'Dashboard', icon: '📊', href: '/dashboard' },
+    { name: 'Dashboard', icon: '📊', href: '/' },
     { name: 'Snapshots', icon: '📸', href: '/snapshots' },
     { name: 'Devices', icon: '🔧', href: '/devices' },
     { name: 'Tests', icon: '🧪', href: '/tests' },
@@ -57,13 +59,19 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
             <ul className="space-y-2">
               {menuItems.map((item) => (
                 <li key={item.name}>
-                  <a
-                    href={item.href}
+                  <Link
+                    to={item.href}
                     className="flex items-center space-x-3 px-3 py-2 rounded-lg text-foreground hover:bg-accent hover:text-white transition-colors"
+                    onClick={() => {
+                      // Close sidebar on mobile after navigation
+                      if (window.innerWidth < 768) {
+                        onToggle()
+                      }
+                    }}
                   >
                     <span className="text-lg">{item.icon}</span>
                     <span className="font-medium">{item.name}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
