@@ -14,5 +14,5 @@ test_bgp_summary:
       xpath: //bgp-information       
       tests:
         - is-equal: down-peer-count, 0
-          info:  "Succes! None of the configured BGP peers are down."
+          info:  "Succes! None of the configured BGP peers are down.."
           err:  "FAIL! There are  peers down"
