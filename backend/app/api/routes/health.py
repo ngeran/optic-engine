@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from datetime import datetime
 from pydantic import BaseModel
 
-from ....core.config import settings
+from backend.app.core.config import settings
 
 router = APIRouter()
 

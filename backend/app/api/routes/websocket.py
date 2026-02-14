@@ -2,12 +2,12 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from typing import Optional
 import uuid
-
-from ....services.websocket_manager import manager
-from ....services.jsnapy_service import jsnapy_service
-from ....schemas.websocket import ClientSnapshotRequest, ClientCheckRequest
-from ....core.exceptions import OpticEngineException
 import logging
+
+from backend.app.services.websocket_manager import manager
+from backend.app.services.jsnapy_service import jsnapy_service
+from backend.app.schemas.websocket import ClientSnapshotRequest, ClientCheckRequest
+from backend.app.core.exceptions import OpticEngineException
 
 logger = logging.getLogger(__name__)
 

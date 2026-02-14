@@ -2,9 +2,9 @@
 from fastapi import APIRouter, HTTPException, status
 from datetime import datetime
 
-from ....schemas.test import TestRequest, TestResponse
-from ....services.jsnapy_service import jsnapy_service
-from ....core.exceptions import OpticEngineException
+from backend.app.schemas.test import TestRequest, TestResponse
+from backend.app.services.jsnapy_service import jsnapy_service
+from backend.app.core.exceptions import OpticEngineException
 
 router = APIRouter(prefix="/run-check", tags=["tests"])
 

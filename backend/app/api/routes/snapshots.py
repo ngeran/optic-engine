@@ -2,9 +2,9 @@
 from fastapi import APIRouter, HTTPException, status
 from datetime import datetime
 
-from ....schemas.snapshot import SnapshotRequest, SnapshotResponse
-from ....services.jsnapy_service import jsnapy_service
-from ....core.exceptions import OpticEngineException
+from backend.app.schemas.snapshot import SnapshotRequest, SnapshotResponse
+from backend.app.services.jsnapy_service import jsnapy_service
+from backend.app.core.exceptions import OpticEngineException
 
 router = APIRouter(prefix="/run-snapshot", tags=["snapshots"])
 

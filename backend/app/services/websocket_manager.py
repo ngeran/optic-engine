@@ -1,6 +1,6 @@
 """WebSocket connection manager for real-time updates."""
 from fastapi import WebSocket
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 import logging
 from datetime import datetime
 
@@ -59,7 +59,7 @@ class ConnectionManager:
     async def send_message(
         self,
         client_id: str,
-        message: WSConnected | WSLog | WSStatus | WSComplete | WSError | WSProgress
+        message: Union[WSConnected, WSLog, WSStatus, WSComplete, WSError, WSProgress]
     ) -> bool:
         """
         Send a message to a specific client.

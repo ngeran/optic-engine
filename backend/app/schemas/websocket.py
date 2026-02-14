@@ -1,6 +1,6 @@
 """WebSocket message schemas."""
 from pydantic import BaseModel, Field
-from typing import Optional, Any, Literal
+from typing import Optional, Any, Literal, Dict
 from datetime import datetime
 
 
@@ -46,7 +46,7 @@ class WSProgress(WSMessage):
     """WebSocket progress update message."""
 
     type: Literal["progress"] = "progress"
-    data: dict[str, Any]  # Override to allow dict data
+    data: Dict[str, Any]  # Override to allow dict data
 
 
 # Client -> Server messages

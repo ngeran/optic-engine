@@ -9,8 +9,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY backend/requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-# Create the internal mount points
-RUN mkdir -p /app/config /app/snapshots /app/testfiles
+# Copy testfiles temporarily to get logging.yml
+COPY testfiles/logging.yml /tmp/logging.yml
+
+# Create the internal mount points and JSNAPy home
+RUN mkdir -p /app/config /app/snapshots /app/testfiles /root/.jsnapy && \
+    cp /tmp/logging.yml /root/.jsnapy/ && \
+    rm /tmp/logging.yml
 
 # Set the working directory to the app root
 WORKDIR /app
