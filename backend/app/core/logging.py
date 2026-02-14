@@ -1,7 +1,6 @@
 """Logging configuration for the application."""
 import logging
 import sys
-from pythonjsonlogger import jsonlogger
 
 from .config import settings
 
@@ -14,14 +13,14 @@ def setup_logging() -> None:
     root_logger = logging.getLogger()
     root_logger.setLevel(log_level)
 
-    # Console handler with JSON formatting
+    # Console handler
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(log_level)
 
-    # JSON formatter for structured logging
-    formatter = jsonlogger.JsonFormatter(
-        '%(asctime)s %(name)s %(levelname)s %(message)s',
-        timestamp=True
+    # Simple formatter
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
     )
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
