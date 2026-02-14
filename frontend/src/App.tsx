@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom"
 import { Layout } from "@/components/layout/Layout"
 import { LogViewer } from "@/components/LogViewer"
 import { Snapshots } from "@/pages/Snapshots"
+import { Devices } from "@/pages/Devices"
 
 function Dashboard() {
   return (
@@ -78,6 +79,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/snapshots" element={<Snapshots />} />
+        <Route path="/devices" element={<Devices />} />
       </Routes>
     </Layout>
   )

@@ -9,6 +9,7 @@ services:
       - ./snapshots:/app/snapshots
       - ./config:/app/config
       - ./testfiles:/app/testfiles
+      - ./inventories:/app/inventories
       - ./jsnapy.cfg:/etc/jsnapy/jsnapy.cfg
     ports:
       - "8000:8000"
@@ -30,6 +31,7 @@ services:
       - ./snapshots:/app/snapshots
       - ./config:/app/config
       - ./testfiles:/app/testfiles
+      - ./inventories:/app/inventories
       - ./jsnapy.cfg:/etc/jsnapy/jsnapy.cfg
     environment:
       - JNOS_DEVICE_IP=${JNOS_DEVICE_IP:-127.0.0.1}

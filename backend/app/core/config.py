@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     config_dir: str = "/app/config"
     snapshots_dir: str = "/app/snapshots"
     testfiles_dir: str = "/app/testfiles"
+    inventories_dir: str = "/app/inventories"
 
     # Device credentials (from env or defaults)
     jnos_device_ip: str = "127.0.0.1"
