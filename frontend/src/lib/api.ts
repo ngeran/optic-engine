@@ -153,6 +153,23 @@ class OpticEngineAPI {
     return response.json()
   }
 
+  async runOperation(request: {
+    operation: 'PRE' | 'POST' | 'CHECK'
+    device_ip?: string
+    username?: string
+    password?: string
+    test_file?: string
+    inventory_file?: string
+    client_id?: string
+  }): Promise<Response> {
+    const response = await fetch(this.apiBaseUrl + '/run-operation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    })
+    return response
+  }
+
   connectWebSocket(handlers: WSHandlers): WebSocketClient {
     return new WebSocketClient(this.wsBaseUrl, handlers)
   }

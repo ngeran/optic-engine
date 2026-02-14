@@ -8,6 +8,7 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const menuItems = [
     { name: 'Dashboard', icon: '📊', href: '/' },
+    { name: 'Operations', icon: '⚡', href: '/operations' },
     { name: 'Snapshots', icon: '📸', href: '/snapshots' },
     { name: 'Devices', icon: '🔧', href: '/devices' },
     { name: 'Tests', icon: '🧪', href: '/tests' },

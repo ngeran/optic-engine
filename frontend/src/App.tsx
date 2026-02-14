@@ -4,6 +4,7 @@ import { LogViewer } from "@/components/LogViewer"
 import { Snapshots } from "@/pages/Snapshots"
 import { Devices } from "@/pages/Devices"
 import { Tests } from "@/pages/Tests"
+import { Operations } from "@/pages/Operations"
 
 function Dashboard() {
   return (
@@ -79,6 +80,7 @@ function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/operations" element={<Operations />} />
         <Route path="/snapshots" element={<Snapshots />} />
         <Route path="/devices" element={<Devices />} />
         <Route path="/tests" element={<Tests />} />

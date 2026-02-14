@@ -11,6 +11,7 @@ services:
       - ./testfiles:/app/testfiles
       - ./inventories:/app/inventories
       - ./jsnapy.cfg:/etc/jsnapy/jsnapy.cfg
+      - ./config/logging.yml:/etc/jsnapy/logging.yml
     ports:
       - "8000:8000"
     environment:
@@ -33,6 +34,7 @@ services:
       - ./testfiles:/app/testfiles
       - ./inventories:/app/inventories
       - ./jsnapy.cfg:/etc/jsnapy/jsnapy.cfg
+      - ./config/logging.yml:/etc/jsnapy/logging.yml
     environment:
       - JNOS_DEVICE_IP=${JNOS_DEVICE_IP:-127.0.0.1}
       - JNOS_USERNAME=${JNOS_USERNAME:-admin}

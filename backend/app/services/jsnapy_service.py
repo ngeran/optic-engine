@@ -62,11 +62,10 @@ class JSNAPyService:
                 test_file=test_file
             )
 
-            # Build command
+            # Build command - use shell to cd into testfiles first
             command = [
-                self.jsnapy_cmd,
-                "--snap", snapshot_type,
-                "-f", str(config_path)
+                "sh", "-c",
+                f"cd /app/testfiles && {self.jsnapy_cmd} --snap {snapshot_type} -f {str(config_path)}"
             ]
 
             # Define WebSocket callback for streaming
@@ -74,7 +73,7 @@ class JSNAPyService:
                 if client_id:
                     await manager.send_log(client_id, line)
 
-            # Execute command
+            # Execute command (already cd'd into /app/testfiles)
             output, return_code = await execute_command_streaming(
                 command=command,
                 websocket_callback=ws_callback if client_id else None
@@ -138,11 +137,10 @@ class JSNAPyService:
                 test_file=test_file
             )
 
-            # Build command
+            # Build command - use --snapcheck which automatically finds pre/post snapshots
             command = [
-                self.jsnapy_cmd,
-                "--check",
-                str(config_path)
+                "sh", "-c",
+                f"cd /app/testfiles && {self.jsnapy_cmd} --snapcheck -f {str(config_path)}"
             ]
 
             # Define WebSocket callback for streaming
@@ -150,7 +148,7 @@ class JSNAPyService:
                 if client_id:
                     await manager.send_log(client_id, line)
 
-            # Execute command
+            # Execute command (already cd'd into /app/testfiles)
             output, return_code = await execute_command_streaming(
                 command=command,
                 websocket_callback=ws_callback if client_id else None
