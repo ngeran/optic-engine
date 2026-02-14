@@ -1,0 +1,7 @@
+logging:
+  - filename: /var/log/jsnapy.log
+    level: debug
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  - filename: /dev/stdout
+    level: info
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
