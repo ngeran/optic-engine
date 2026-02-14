@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
 import type { TestFile, TestFileContent } from '@/lib/api'
-import { FileText, Calendar, Trash2, Eye, RefreshCw, X } from 'lucide-react'
+import { FileText, Calendar, Trash2, Eye, RefreshCw, X, Pencil } from 'lucide-react'
 
 export function Tests() {
   const [tests, setTests] = useState<TestFile[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showViewer, setShowViewer] = useState(false)
+  const [showEditor, setShowEditor] = useState(false)
   const [currentTest, setCurrentTest] = useState<TestFileContent | null>(null)
+  const [editContent, setEditContent] = useState('')
+  const [saving, setSaving] = useState(false)
 
   const fetchTests = async () => {
     setLoading(true)
@@ -48,7 +51,7 @@ export function Tests() {
   }
 
   const handleDelete = async (filename: string) => {
-    if (!confirm(`Are you sure you want to delete ${filename}?`)) {
+    if (!confirm(\`Are you sure you want to delete \${filename}?\`)) {
       return
     }
     try {
@@ -56,6 +59,33 @@ export function Tests() {
       await fetchTests()
     } catch (err) {
       alert('Failed to delete test file: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
+  }
+
+  const handleEdit = async (filename: string) => {
+    try {
+      const data = await api.getTestFile(filename)
+      setCurrentTest(data)
+      setEditContent(data.content)
+      setShowEditor(true)
+    } catch (err) {
+      alert('Failed to load test file: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
+  }
+
+  const handleSaveEdit = async () => {
+    if (!currentTest) return
+    setSaving(true)
+    try {
+      await api.saveTestFile({ filename: currentTest.filename, content: editContent })
+      setShowEditor(false)
+      setCurrentTest(null)
+      setEditContent('')
+      await fetchTests()
+    } catch (err) {
+      alert('Failed to save test file: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -73,7 +103,7 @@ export function Tests() {
           onClick={fetchTests}
           className="flex items-center space-x-2 px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg transition-colors text-foreground"
         >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={\`w-4 h-4 \${loading ? 'animate-spin' : ''}\`} />
           <span>Refresh</span>
         </button>
       </div>
@@ -173,6 +203,13 @@ export function Tests() {
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
+                          onClick={() => handleEdit(test.name)}
+                          className="p-1.5 rounded hover:bg-accent transition-colors text-foreground"
+                          title="Edit test"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => handleDelete(test.name)}
                           className="p-1.5 rounded hover:bg-red-500/20 transition-colors text-red-500"
                           title="Delete test"
@@ -242,6 +279,59 @@ export function Tests() {
                 className="px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg transition-colors text-foreground"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Editor Modal */}
+      {showEditor && currentTest && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background border border-accent rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-accent">
+              <h3 className="text-lg font-semibold text-foreground font-mono">Edit {currentTest.filename}</h3>
+              <button
+                onClick={() => {
+                  setShowEditor(false)
+                  setCurrentTest(null)
+                  setEditContent('')
+                }}
+                className="p-1 rounded hover:bg-accent transition-colors text-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-auto p-4">
+              <textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                className="w-full h-96 px-3 py-2 bg-muted border border-accent rounded-lg text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+              />
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-end space-x-2 p-4 border-t border-accent">
+              <button
+                onClick={() => {
+                  setShowEditor(false)
+                  setCurrentTest(null)
+                  setEditContent('')
+                }}
+                disabled={saving}
+                className="px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg transition-colors text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                disabled={saving}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? 'Saving...' : 'Save'}
               </button>
             </div>
           </div>
