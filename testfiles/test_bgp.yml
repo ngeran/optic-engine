@@ -1,0 +1,18 @@
+test_bgp_summary:
+
+  - command: show bgp summary
+
+  - iterate:
+      xpath: //bgp-peer
+      id: peer-address
+      tests:
+        - no-diff: flap-count
+          info:  "Succes!  did not register flaps."
+          err:  "FAIL!!  flapped. Pre-change: . Post-change: "
+
+  - item:
+      xpath: //bgp-information       
+      tests:
+        - is-equal: down-peer-count, 0
+          info:  "Succes! None of the configured BGP peers are down."
+          err:  "FAIL! There are  peers down"

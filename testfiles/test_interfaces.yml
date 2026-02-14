@@ -1,0 +1,12 @@
+
+test_router_interface:
+
+  - command: show interface terse
+  
+  - iterate:
+      xpath: //physical-interface
+      id: name
+      tests:
+        - no-diff: oper-status    
+          info: "Success! The operational status of interfaces pre and post change is the same."
+          err: "Fail ! Interface  changed from  to ."

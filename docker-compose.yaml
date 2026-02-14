@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend:/app/backend
+      - ./backend/main.py:/app/main.py  # Mount updated main.py
+      - ./testing-topologies:/app/testing-topologies
+      - ./snapshots:/app/snapshots
+      - ./config:/app/config
+      - ./testfiles:/app/testfiles
+      - ./jsnapy.cfg:/etc/jsnapy/jsnapy.cfg
+      # Mount Docker socket for container control
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app/backend
+      - JNOS_DEVICE_IP=${JNOS_DEVICE_IP:-127.0.0.1}
+      - JNOS_USERNAME=${JNOS_USERNAME:-admin}
+      - JNOS_PASSWORD=${JNOS_PASSWORD:-manolis1}
+      - JNOS_TEST_FILE=${JNOS_TEST_FILE:-test_version.yaml}
+    working_dir: /app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  automation-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile.automation-engine
+    volumes:
+      - ./backend:/app/backend
+      - ./testing-topologies:/app/testing-topologies
+      - ./snapshots:/app/snapshots
+      - ./config:/app/config
+      - ./testfiles:/app/testfiles
+      - ./jsnapy.cfg:/etc/jsnapy/jsnapy.cfg
+      # Mount Docker socket for container control
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - JNOS_DEVICE_IP=${JNOS_DEVICE_IP:-127.0.0.1}
+      - JNOS_USERNAME=${JNOS_USERNAME:-admin}
+      - JNOS_PASSWORD=${JNOS_PASSWORD:-manolis1}
+      - JNOS_TEST_FILE=${JNOS_TEST_FILE:-test_version.yaml}
+    # Container needs direct network access for NETCONF connections
+    network_mode: host
+    # Keep container running for docker exec commands
+    # JSNAPy uses inline logging from jsnapy.cfg, not logging.yml file
+    command: tail -f /dev/null
+    restart: unless-stopped

@@ -1,0 +1,17 @@
+tests_include:
+  - check_show_interfaces
+
+check_show_interfaces:
+  - command: show interfaces extensive
+    iterate:
+      xpath: //physical-interface[contains(name, "-")]
+      tests:
+        - is-in: oper-status, up
+          err: "{{post['name']}} \t {{post['oper-status']}} \t {{post['admin-status']}} \t {{post['traffic-statistics/input-bps']}} \t {{post['traffic-statistics/output-bps']}}"
+          info: "Test Failed!!! Physical operational status is not up, interface <{{post['logical-interface/name']}}> is: <{{post['oper-status']}}> with admin status <{{post['admin-status']}}>"
+  - iterate:
+      xpath: //physical-interface/logical-interface[contains(name, "-")]
+      tests:
+        - is-in: snmp-index, up
+          err: "{{post['name']}} \t {{post['../oper-status']}} \t {{post['../admin-status']}} \t {{post['transit-traffic-statistics/input-bps']}} \t {{post['transit-traffic-statistics/output-bps']}}"
+          info: "Test Failed!!! logical operational status is not up, interface <{{post['name']}}> is: <{{post['oper-status']}}> with admin status <{{post['adminstatus']}}>"

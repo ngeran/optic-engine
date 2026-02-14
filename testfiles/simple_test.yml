@@ -1,0 +1,12 @@
+tests_include:
+  - test_show_version
+
+test_show_version:
+  - command: show version
+    iterate:
+      xpath: //software-information
+      id: 'junos-version'
+      tests:
+        - no-diff: junos-version
+          info: "Test Succeeded!! {{post['host-name']}} has Junos version \"{{post['junos-version']}}\""
+          err: "Test Failed!!! Junos version does not match"
