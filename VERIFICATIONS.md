@@ -416,4 +416,42 @@ docker-compose exec automation-engine jsnapy --version
 
 ---
 
+## Manual Test Execution
+
+### Test 1: BGP Summary Check (2026-02-14)
+
+**Device**: 172.27.200.200
+**Test file**: test_bgp.yml
+**Credentials**: admin / manolis1
+
+#### Pre Snapshot
+```bash
+docker-compose exec automation-engine jsnapy --snap pre -f /app/config/snap_config.yaml -v
+```
+**Result**: ✅ Success
+
+#### Post Snapshot
+```bash
+docker-compose exec automation-engine jsnapy --snap post -f /app/config/snap_config.yaml -v
+```
+**Result**: ✅ Success
+
+#### Check Comparison
+```bash
+docker-compose exec automation-engine jsnapy --check pre post -f /app/config/snap_config.yaml -v
+```
+**Result**: ✅ All tests passed
+- Total tests passed: 2
+- Total tests failed: 0
+
+**Tests Run**:
+1. `no-diff: flap-count` - Verify BGP peer didn't flap ✅
+2. `is-equal: down-peer-count, 0` - Verify no BGP peers are down ✅
+
+**Snapshots Created**:
+- `/app/snapshots/172.27.200.200_pre_show_bgp_summary.xml`
+- `/app/snapshots/172.27.200.200_post_show_bgp_summary.xml`
+
+---
+
 Last updated: 2026-02-14
