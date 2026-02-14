@@ -1,4 +1,5 @@
-import { useState, ReactNode } from "react"
+import { useState } from "react"
+import type { ReactNode } from "react"
 import { Header } from "./Header"
 import { Sidebar } from "./Sidebar"
 import { Footer } from "./Footer"

@@ -1,9 +1,12 @@
 import { Layout } from "@/components/layout/Layout"
+import { LogViewer } from "@/components/LogViewer"
 
 function App() {
   return (
     <Layout>
       <div className="space-y-6">
+        {/* Log Viewer */}
+        <LogViewer />
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-2">
             Welcome to Optic Engine

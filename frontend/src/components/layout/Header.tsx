@@ -1,4 +1,5 @@
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { WebSocketStatus } from "@/components/WebSocketStatus"
 
 export function Header() {
   return (
@@ -13,6 +14,7 @@ export function Header() {
           </span>
         </div>
         <div className="flex items-center space-x-4">
+          <WebSocketStatus />
           <ThemeToggle />
         </div>
       </div>
