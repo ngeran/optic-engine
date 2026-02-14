@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
 import type { TestFile, TestFileContent } from '@/lib/api'
-import { FileText, Calendar, Trash2, Eye, RefreshCw, X, Pencil } from 'lucide-react'
+import { FileText, Calendar, Trash2, Eye, RefreshCw, X, Pencil, Plus } from 'lucide-react'
 
 export function Tests() {
   const [tests, setTests] = useState<TestFile[]>([])
@@ -12,6 +12,9 @@ export function Tests() {
   const [currentTest, setCurrentTest] = useState<TestFileContent | null>(null)
   const [editContent, setEditContent] = useState('')
   const [saving, setSaving] = useState(false)
+  const [showNewTest, setShowNewTest] = useState(false)
+  const [newTestName, setNewTestName] = useState('')
+  const [newTestContent, setNewTestContent] = useState('')
 
   const fetchTests = async () => {
     setLoading(true)
@@ -89,6 +92,30 @@ export function Tests() {
     }
   }
 
+  const handleCreateNew = async () => {
+    if (!newTestName.trim() || !newTestContent.trim()) {
+      alert('Please provide both filename and content')
+      return
+    }
+
+    const filename = newTestName.endsWith('.yml') || newTestName.endsWith('.yaml')
+      ? newTestName
+      : newTestName + '.yml'
+
+    setSaving(true)
+    try {
+      await api.saveTestFile({ filename, content: newTestContent })
+      setShowNewTest(false)
+      setNewTestName('')
+      setNewTestContent('')
+      await fetchTests()
+    } catch (err) {
+      alert('Failed to create test file: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -99,13 +126,22 @@ export function Tests() {
             Manage JSNAPy test definitions for validation checks
           </p>
         </div>
-        <button
-          onClick={fetchTests}
-          className="flex items-center space-x-2 px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg transition-colors text-foreground"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          <span>Refresh</span>
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={fetchTests}
+            className="flex items-center space-x-2 px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg transition-colors text-foreground"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <span>Refresh</span>
+          </button>
+          <button
+            onClick={() => setShowNewTest(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>New Test</span>
+          </button>
+        </div>
       </div>
 
       {/* Error Message */}
@@ -332,6 +368,89 @@ export function Tests() {
                 className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Test Modal */}
+      {showNewTest && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background border border-accent rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-accent">
+              <h3 className="text-lg font-semibold text-foreground">Create New Test</h3>
+              <button
+                onClick={() => {
+                  setShowNewTest(false)
+                  setNewTestName('')
+                  setNewTestContent('')
+                }}
+                className="p-1 rounded hover:bg-accent transition-colors text-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-auto p-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Filename
+                </label>
+                <input
+                  type="text"
+                  value={newTestName}
+                  onChange={(e) => setNewTestName(e.target.value)}
+                  placeholder="test_bgp.yml"
+                  className="w-full px-3 py-2 bg-background border border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-accent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  YAML Content
+                </label>
+                <textarea
+                  value={newTestContent}
+                  onChange={(e) => setNewTestContent(e.target.value)}
+                  placeholder="# Enter your JSNAPy test YAML here
+tests_include:
+  - test_bgp_neighbors
+
+test_bgp_neighbors:
+  - command: show bgp neighbor
+    iterate:
+      xpath: //bgp-peer
+      id: peer-address
+      tests:
+        - no-diff: peer-state
+          info: 'BGP peer state matches'
+          err: 'BGP peer state does not match'"
+                  className="w-full h-96 px-3 py-2 bg-muted border border-accent rounded-lg text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+                />
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-end space-x-2 p-4 border-t border-accent">
+              <button
+                onClick={() => {
+                  setShowNewTest(false)
+                  setNewTestName('')
+                  setNewTestContent('')
+                }}
+                disabled={saving}
+                className="px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg transition-colors text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateNew}
+                disabled={saving}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? 'Saving...' : 'Create'}
               </button>
             </div>
           </div>
