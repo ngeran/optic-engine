@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
-import type { SnapshotFile } from '@/lib/api'
-import { Camera, Calendar, FileText, Trash2, Eye, Download, RefreshCw } from 'lucide-react'
+import type { SnapshotFile, SnapshotContent } from '@/lib/api'
+import { Camera, Calendar, FileText, Trash2, Eye, RefreshCw, X } from 'lucide-react'
 
 export function Snapshots() {
   const [snapshots, setSnapshots] = useState<SnapshotFile[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showViewer, setShowViewer] = useState(false)
+  const [currentSnapshot, setCurrentSnapshot] = useState<SnapshotContent | null>(null)
 
   const fetchSnapshots = async () => {
     setLoading(true)
@@ -40,6 +42,28 @@ export function Snapshots() {
       return 'post'
     }
     return 'pre'
+  }
+
+  const handleView = async (filename: string) => {
+    try {
+      const data = await api.getSnapshot(filename)
+      setCurrentSnapshot(data)
+      setShowViewer(true)
+    } catch (err) {
+      alert('Failed to load snapshot: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
+  }
+
+  const handleDelete = async (filename: string) => {
+    if (!confirm(`Are you sure you want to delete ${filename}?`)) {
+      return
+    }
+    try {
+      await api.deleteSnapshot(filename)
+      await fetchSnapshots()
+    } catch (err) {
+      alert('Failed to delete snapshot: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
   }
 
   return (
@@ -167,18 +191,14 @@ export function Snapshots() {
                       <td className="px-6 py-4 whitespace-nowrap text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button
+                            onClick={() => handleView(snapshot.name)}
                             className="p-1.5 rounded hover:bg-accent transition-colors text-foreground"
                             title="View snapshot"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
-                            className="p-1.5 rounded hover:bg-accent transition-colors text-foreground"
-                            title="Download snapshot"
-                          >
-                            <Download className="w-4 h-4" />
-                          </button>
-                          <button
+                            onClick={() => handleDelete(snapshot.name)}
                             className="p-1.5 rounded hover:bg-red-500/20 transition-colors text-red-500"
                             title="Delete snapshot"
                           >
@@ -215,6 +235,47 @@ export function Snapshots() {
               {formatSize(snapshots.reduce((acc, s) => acc + s.size, 0))}
             </div>
             <div className="text-sm text-foreground opacity-70">Total Size</div>
+          </div>
+        </div>
+      )}
+
+      {/* Viewer Modal */}
+      {showViewer && currentSnapshot && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background border border-accent rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-accent">
+              <h3 className="text-lg font-semibold text-foreground font-mono">{currentSnapshot.filename}</h3>
+              <button
+                onClick={() => {
+                  setShowViewer(false)
+                  setCurrentSnapshot(null)
+                }}
+                className="p-1 rounded hover:bg-accent transition-colors text-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-auto p-4">
+              <pre className="bg-muted p-4 rounded-lg text-sm text-foreground font-mono whitespace-pre-wrap">
+                {currentSnapshot.content}
+              </pre>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-end p-4 border-t border-accent">
+              <button
+                onClick={() => {
+                  setShowViewer(false)
+                  setCurrentSnapshot(null)
+                }}
+                className="px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg transition-colors text-foreground"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

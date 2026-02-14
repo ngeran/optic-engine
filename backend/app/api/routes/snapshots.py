@@ -148,3 +148,85 @@ async def run_post_snapshot(request: SnapshotRequest = None) -> SnapshotResponse
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Unexpected error: {str(e)}"
         )
+
+
+@router.get("/{filename}", response_model=dict)
+async def get_snapshot(filename: str):
+    """
+    Get a specific snapshot file content.
+
+    Args:
+        filename: Name of the snapshot file
+
+    Returns:
+        Snapshot file content
+
+    Raises:
+        HTTPException: If file not found or read fails
+    """
+    try:
+        snapshots_dir = Path(settings.snapshots_dir)
+        file_path = snapshots_dir / filename
+
+        if not file_path.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Snapshot '{filename}' not found"
+            )
+
+        content = file_path.read_text()
+        stat = file_path.stat()
+
+        return {
+            "filename": filename,
+            "content": content,
+            "size": stat.st_size
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to read snapshot: {str(e)}"
+        )
+
+
+@router.delete("/{filename}", response_model=dict)
+async def delete_snapshot(filename: str):
+    """
+    Delete a snapshot file.
+
+    Args:
+        filename: Name of the snapshot file
+
+    Returns:
+        Success message
+
+    Raises:
+        HTTPException: If file not found or delete fails
+    """
+    try:
+        snapshots_dir = Path(settings.snapshots_dir)
+        file_path = snapshots_dir / filename
+
+        if not file_path.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Snapshot '{filename}' not found"
+            )
+
+        file_path.unlink()
+
+        return {
+            "status": "success",
+            "message": f"Snapshot '{filename}' deleted successfully"
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to delete snapshot: {str(e)}"
+        )
