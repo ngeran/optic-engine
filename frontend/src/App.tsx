@@ -1,6 +1,6 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Link } from "react-router-dom"
 import { Layout } from "@/components/layout/Layout"
-import { LogViewer } from "@/components/LogViewer"
+import { DashboardStats } from "@/components/DashboardStats"
 import { Snapshots } from "@/pages/Snapshots"
 import { Devices } from "@/pages/Devices"
 import { Tests } from "@/pages/Tests"
@@ -10,9 +10,6 @@ import { History } from "@/pages/History"
 function Dashboard() {
   return (
     <div className="space-y-6">
-      {/* Log Viewer */}
-      <LogViewer />
-
       <div>
         <h2 className="text-2xl font-bold text-foreground mb-2">
           Welcome to Optic Engine
@@ -23,53 +20,29 @@ function Dashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-accent border border-accent rounded-lg p-4 hover:bg-accent-hover transition-colors">
-          <div className="text-2xl mb-2">📸</div>
-          <div className="text-2xl font-bold text-foreground">0</div>
-          <div className="text-sm text-foreground opacity-70">Snapshots</div>
-        </div>
-
-        <div className="bg-accent border border-accent rounded-lg p-4 hover:bg-accent-hover transition-colors">
-          <div className="text-2xl mb-2">🔧</div>
-          <div className="text-2xl font-bold text-foreground">0</div>
-          <div className="text-sm text-foreground opacity-70">Devices</div>
-        </div>
-
-        <div className="bg-accent border border-accent rounded-lg p-4 hover:bg-accent-hover transition-colors">
-          <div className="text-2xl mb-2">✅</div>
-          <div className="text-2xl font-bold text-foreground">0</div>
-          <div className="text-sm text-foreground opacity-70">Tests Passed</div>
-        </div>
-
-        <div className="bg-accent border border-accent rounded-lg p-4 hover:bg-accent-hover transition-colors">
-          <div className="text-2xl mb-2">📊</div>
-          <div className="text-2xl font-bold text-foreground">0</div>
-          <div className="text-sm text-foreground opacity-70">Comparisons</div>
-        </div>
-      </div>
+      <DashboardStats />
 
       {/* Quick Actions */}
       <div className="bg-muted border border-accent rounded-lg p-6">
         <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="bg-accent hover:bg-accent-hover text-foreground px-4 py-3 rounded-lg transition-colors text-left">
+          <Link to="/operations" className="bg-accent hover:bg-accent-hover text-foreground px-4 py-3 rounded-lg transition-colors text-left">
             <div className="text-lg mb-1">📸</div>
             <div className="font-medium">New Snapshot</div>
             <div className="text-xs opacity-70">Capture device state</div>
-          </button>
+          </Link>
 
-          <button className="bg-accent hover:bg-accent-hover text-foreground px-4 py-3 rounded-lg transition-colors text-left">
+          <Link to="/operations" className="bg-accent hover:bg-accent-hover text-foreground px-4 py-3 rounded-lg transition-colors text-left">
             <div className="text-lg mb-1">🔍</div>
             <div className="font-medium">Compare Snapshots</div>
             <div className="text-xs opacity-70">Run pre/post checks</div>
-          </button>
+          </Link>
 
-          <button className="bg-accent hover:bg-accent-hover text-foreground px-4 py-3 rounded-lg transition-colors text-left">
+          <Link to="/devices" className="bg-accent hover:bg-accent-hover text-foreground px-4 py-3 rounded-lg transition-colors text-left">
             <div className="text-lg mb-1">➕</div>
             <div className="font-medium">Add Device</div>
             <div className="text-xs opacity-70">Configure new device</div>
-          </button>
+          </Link>
         </div>
       </div>
     </div>
