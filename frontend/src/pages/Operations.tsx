@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Play, CheckCircle } from 'lucide-react'
 import { api, WebSocketClient } from '@/lib/api'
 import type { InventoryFile, TestFile } from '@/lib/api'
+import { ResultsCard, type OperationResult, type OperationStatus } from '@/components/ResultsCard'
 
 type InputMode = 'manual' | 'inventory'
 type OperationType = 'PRE' | 'POST' | 'CHECK'
@@ -28,8 +29,12 @@ export function Operations() {
   const [wsConnected, setWsConnected] = useState(false)
   const [logs, setLogs] = useState<Array<{timestamp: string; message: string; type: 'info' | 'error' | 'success'}>>([])
 
+  // Operation results
+  const [operationResults, setOperationResults] = useState<OperationResult[]>([])
+
   // WebSocket client reference
   const wsClientRef = useRef<WebSocketClient | null>(null)
+  const currentOperationRef = useRef<OperationResult | null>(null)
 
   // Load inventories and tests on mount
   useEffect(() => {
@@ -86,6 +91,24 @@ export function Operations() {
     setLogs([]) // Clear previous logs
     setWsConnected(false)
 
+    // Create new operation result
+    const newResult: OperationResult = {
+      id: Date.now().toString(),
+      type: operationType,
+      status: 'running',
+      deviceIP: inputMode === 'manual' ? deviceIP : selectedInventory,
+      testFile: selectedTests[0],
+      startTime: new Date().toISOString(),
+      logs: []
+    }
+    console.log('[runOperation] Creating new result:', newResult)
+    currentOperationRef.current = newResult
+    setOperationResults(prev => {
+      const newResults = [newResult, ...prev]
+      console.log('[runOperation] Results after adding:', newResults.length)
+      return newResults
+    })
+
     // Connect to WebSocket for real-time updates
     if (!wsClientRef.current) {
       wsClientRef.current = api.connectWebSocket({
@@ -96,17 +119,61 @@ export function Operations() {
         onLog: (message) => {
           // Real-time log from JSNAPy execution
           addLog('info', message.data)
+          // Also add to current operation result using functional update
+          setOperationResults(prev => prev.map(r => {
+            if (r.id === currentOperationRef.current?.id) {
+              const updatedLogs = [...(r.logs || []), {
+                timestamp: message.timestamp,
+                message: message.data,
+                type: 'info' as const
+              }]
+              const updated = { ...r, logs: updatedLogs }
+              currentOperationRef.current = updated
+              return updated
+            }
+            return r
+          }))
         },
         onStatus: (message) => {
           addLog('info', message.data)
         },
         onComplete: (message) => {
+          console.log('[WebSocket] onComplete received:', message)
           addLog('success', message.data || 'Operation completed')
           setIsRunning(false)
+          // Update operation result as completed
+          setOperationResults(prev => prev.map(r => {
+            if (r.id === currentOperationRef.current?.id) {
+              const updated = {
+                ...r,
+                status: 'success' as OperationStatus,
+                endTime: new Date().toISOString(),
+                message: message.data || 'Operation completed successfully'
+              }
+              currentOperationRef.current = updated
+              return updated
+            }
+            return r
+          }))
         },
         onError: (message) => {
+          console.log('[WebSocket] onError received:', message)
           addLog('error', message.data || 'Operation error')
           setIsRunning(false)
+          // Update operation result as error
+          setOperationResults(prev => prev.map(r => {
+            if (r.id === currentOperationRef.current?.id) {
+              const updated = {
+                ...r,
+                status: 'error' as OperationStatus,
+                endTime: new Date().toISOString(),
+                message: message.data || 'Operation failed'
+              }
+              currentOperationRef.current = updated
+              return updated
+            }
+            return r
+          }))
         }
       })
     }
@@ -146,6 +213,10 @@ export function Operations() {
       type,
       message
     }])
+  }
+
+  const clearResult = (id: string) => {
+    setOperationResults(prev => prev.filter(r => r.id !== id))
   }
 
   return (
@@ -370,6 +441,20 @@ export function Operations() {
               <div ref={(el) => el?.scrollIntoView({ behavior: 'smooth' })} />
             )}
           </div>
+        </div>
+      )}
+
+      {/* Operation Results */}
+      {operationResults.length > 0 && (
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-foreground">Operation Results</h2>
+          {operationResults.map(result => (
+            <ResultsCard
+              key={result.id}
+              result={result}
+              onClear={() => clearResult(result.id)}
+            />
+          ))}
         </div>
       )}
     </div>
