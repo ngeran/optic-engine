@@ -6,6 +6,7 @@ import { Devices } from "@/pages/Devices"
 import { Tests } from "@/pages/Tests"
 import { Operations } from "@/pages/Operations"
 import { History } from "@/pages/History"
+import { Documentation } from "@/pages/Documentation"
 
 function Dashboard() {
   return (
@@ -59,6 +60,7 @@ function App() {
         <Route path="/devices" element={<Devices />} />
         <Route path="/tests" element={<Tests />} />
         <Route path="/history" element={<History />} />
+        <Route path="/docs" element={<Documentation />} />
       </Routes>
     </Layout>
   )
