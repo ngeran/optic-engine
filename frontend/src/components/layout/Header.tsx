@@ -11,7 +11,7 @@ export function Header() {
           <h1 className="text-xl font-bold text-foreground">
             Optic Engine
           </h1>
-          <span className="text-xs px-2 py-1 rounded bg-accent text-foreground">
+          <span className="text-xs px-2 py-1 rounded bg-primary text-primary-foreground">
             JSNAPy
           </span>
         </div>

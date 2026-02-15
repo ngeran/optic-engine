@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { api } from '@/lib/api'
+import { Camera, Settings, CheckCircle, XCircle } from 'lucide-react'
 
 interface DashboardStats {
   snapshots: number
@@ -60,25 +61,25 @@ export function DashboardStats() {
       {loading ? (
         <>
           <div className="bg-accent border border-accent rounded-lg p-4 animate-pulse">
-            <div className="text-2xl mb-2">📸</div>
+            <Camera className="w-8 h-8 mb-2 text-foreground opacity-70" />
             <div className="text-2xl font-bold text-foreground">...</div>
             <div className="text-sm text-foreground opacity-70">Snapshots</div>
           </div>
 
           <div className="bg-accent border border-accent rounded-lg p-4 animate-pulse">
-            <div className="text-2xl mb-2">🔧</div>
+            <Settings className="w-8 h-8 mb-2 text-foreground opacity-70" />
             <div className="text-2xl font-bold text-foreground">...</div>
             <div className="text-sm text-foreground opacity-70">Devices</div>
           </div>
 
           <div className="bg-accent border border-accent rounded-lg p-4 animate-pulse">
-            <div className="text-2xl mb-2">✅</div>
+            <CheckCircle className="w-8 h-8 mb-2 text-foreground opacity-70" />
             <div className="text-2xl font-bold text-foreground">...</div>
             <div className="text-sm text-foreground opacity-70">Tests Passed</div>
           </div>
 
           <div className="bg-accent border border-accent rounded-lg p-4 animate-pulse">
-            <div className="text-2xl mb-2">❌</div>
+            <XCircle className="w-8 h-8 mb-2 text-foreground opacity-70" />
             <div className="text-2xl font-bold text-foreground">...</div>
             <div className="text-sm text-foreground opacity-70">Tests Failed</div>
           </div>
@@ -90,25 +91,25 @@ export function DashboardStats() {
       ) : (
         <>
           <div className="bg-accent border border-accent rounded-lg p-4 hover:bg-accent-hover transition-colors">
-            <div className="text-2xl mb-2">📸</div>
+            <Camera className="w-8 h-8 mb-2 text-foreground opacity-70" />
             <div className="text-2xl font-bold text-foreground">{stats.snapshots}</div>
             <div className="text-sm text-foreground opacity-70">Snapshot{stats.snapshots !== 1 ? 's' : ''}</div>
           </div>
 
           <div className="bg-accent border border-accent rounded-lg p-4 hover:bg-accent-hover transition-colors">
-            <div className="text-2xl mb-2">🔧</div>
+            <Settings className="w-8 h-8 mb-2 text-foreground opacity-70" />
             <div className="text-2xl font-bold text-foreground">{stats.devices}</div>
             <div className="text-sm text-foreground opacity-70">Device{stats.devices !== 1 ? 's' : ''}</div>
           </div>
 
           <div className="bg-accent border border-accent rounded-lg p-4 hover:bg-accent-hover transition-colors">
-            <div className="text-2xl mb-2">✅</div>
+            <CheckCircle className="w-8 h-8 mb-2 text-foreground opacity-70" />
             <div className="text-2xl font-bold text-foreground">{stats.testsPassed}</div>
             <div className="text-sm text-foreground opacity-70">Tests Passed</div>
           </div>
 
           <div className="bg-accent border border-accent rounded-lg p-4 hover:bg-accent-hover transition-colors">
-            <div className="text-2xl mb-2">❌</div>
+            <XCircle className="w-8 h-8 mb-2 text-foreground opacity-70" />
             <div className="text-2xl font-bold text-foreground">{stats.testsFailed}</div>
             <div className="text-sm text-foreground opacity-70">Tests Failed</div>
           </div>

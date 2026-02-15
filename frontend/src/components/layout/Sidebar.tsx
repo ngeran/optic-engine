@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { LayoutDashboard, Zap, Camera, Settings, TestTube, History as HistoryIcon } from 'lucide-react'
 
 interface SidebarProps {
   isOpen: boolean
@@ -7,12 +8,12 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const menuItems = [
-    { name: 'Dashboard', icon: '📊', href: '/' },
-    { name: 'Operations', icon: '⚡', href: '/operations' },
-    { name: 'Snapshots', icon: '📸', href: '/snapshots' },
-    { name: 'Devices', icon: '🔧', href: '/devices' },
-    { name: 'Tests', icon: '🧪', href: '/tests' },
-    { name: 'History', icon: '📜', href: '/history' },
+    { name: 'Dashboard', icon: LayoutDashboard, href: '/' },
+    { name: 'Operations', icon: Zap, href: '/operations' },
+    { name: 'Snapshots', icon: Camera, href: '/snapshots' },
+    { name: 'Devices', icon: Settings, href: '/devices' },
+    { name: 'Tests', icon: TestTube, href: '/tests' },
+    { name: 'History', icon: HistoryIcon, href: '/history' },
   ]
 
   return (
@@ -69,7 +70,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                       }
                     }}
                   >
-                    <span className="text-lg">{item.icon}</span>
+                    <item.icon className="w-5 h-5 text-foreground opacity-70" />
                     <span className="font-medium">{item.name}</span>
                   </Link>
                 </li>

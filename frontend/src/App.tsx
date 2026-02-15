@@ -7,6 +7,7 @@ import { Tests } from "@/pages/Tests"
 import { Operations } from "@/pages/Operations"
 import { History } from "@/pages/History"
 import { Documentation } from "@/pages/Documentation"
+import { Camera, GitCompare, Plus } from 'lucide-react'
 
 function Dashboard() {
   return (
@@ -28,19 +29,19 @@ function Dashboard() {
         <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link to="/operations" className="bg-accent hover:bg-accent-hover text-foreground px-4 py-3 rounded-lg transition-colors text-left">
-            <div className="text-lg mb-1">📸</div>
+            <Camera className="w-6 h-6 mb-1 text-foreground opacity-70" />
             <div className="font-medium">New Snapshot</div>
             <div className="text-xs opacity-70">Capture device state</div>
           </Link>
 
           <Link to="/operations" className="bg-accent hover:bg-accent-hover text-foreground px-4 py-3 rounded-lg transition-colors text-left">
-            <div className="text-lg mb-1">🔍</div>
+            <GitCompare className="w-6 h-6 mb-1 text-foreground opacity-70" />
             <div className="font-medium">Compare Snapshots</div>
             <div className="text-xs opacity-70">Run pre/post checks</div>
           </Link>
 
           <Link to="/devices" className="bg-accent hover:bg-accent-hover text-foreground px-4 py-3 rounded-lg transition-colors text-left">
-            <div className="text-lg mb-1">➕</div>
+            <Plus className="w-6 h-6 mb-1 text-foreground opacity-70" />
             <div className="font-medium">Add Device</div>
             <div className="text-xs opacity-70">Configure new device</div>
           </Link>
