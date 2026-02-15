@@ -5,6 +5,7 @@ import { Snapshots } from "@/pages/Snapshots"
 import { Devices } from "@/pages/Devices"
 import { Tests } from "@/pages/Tests"
 import { Operations } from "@/pages/Operations"
+import { History } from "@/pages/History"
 
 function Dashboard() {
   return (
@@ -84,6 +85,7 @@ function App() {
         <Route path="/snapshots" element={<Snapshots />} />
         <Route path="/devices" element={<Devices />} />
         <Route path="/tests" element={<Tests />} />
+        <Route path="/history" element={<History />} />
       </Routes>
     </Layout>
   )

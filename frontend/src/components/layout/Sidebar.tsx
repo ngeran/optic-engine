@@ -13,7 +13,6 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
     { name: 'Devices', icon: '🔧', href: '/devices' },
     { name: 'Tests', icon: '🧪', href: '/tests' },
     { name: 'History', icon: '📜', href: '/history' },
-    { name: 'Settings', icon: '⚙️', href: '/settings' },
   ]
 
   return (

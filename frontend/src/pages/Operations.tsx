@@ -4,6 +4,40 @@ import { api, WebSocketClient } from '@/lib/api'
 import type { InventoryFile, TestFile } from '@/lib/api'
 import { ResultsCard, type OperationResult, type OperationStatus } from '@/components/ResultsCard'
 
+// History storage key
+const HISTORY_STORAGE_KEY = 'operation_history'
+
+// Load history from localStorage
+const loadHistory = (): OperationResult[] => {
+  try {
+    const saved = localStorage.getItem(HISTORY_STORAGE_KEY)
+    if (saved) {
+      return JSON.parse(saved)
+    }
+    return []
+  } catch (err) {
+    console.error('Failed to load history:', err)
+    return []
+  }
+}
+
+// Save to localStorage
+const saveToHistory = (entry: OperationResult) => {
+  try {
+    const history = loadHistory()
+    const updated = [entry, ...history].slice(0, 100) // Keep last 100 entries
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(updated))
+    // Trigger storage event for other tabs
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: HISTORY_STORAGE_KEY,
+      newValue: JSON.stringify(updated),
+      storageArea: localStorage
+    }))
+  } catch (err) {
+    console.error('Failed to save to history:', err)
+  }
+}
+
 type InputMode = 'manual' | 'inventory'
 type OperationType = 'PRE' | 'POST' | 'CHECK'
 
@@ -101,13 +135,8 @@ export function Operations() {
       startTime: new Date().toISOString(),
       logs: []
     }
-    console.log('[runOperation] Creating new result:', newResult)
     currentOperationRef.current = newResult
-    setOperationResults(prev => {
-      const newResults = [newResult, ...prev]
-      console.log('[runOperation] Results after adding:', newResults.length)
-      return newResults
-    })
+    setOperationResults(prev => [newResult, ...prev])
 
     // Connect to WebSocket for real-time updates
     if (!wsClientRef.current) {
@@ -138,7 +167,6 @@ export function Operations() {
           addLog('info', message.data)
         },
         onComplete: (message) => {
-          console.log('[WebSocket] onComplete received:', message)
           addLog('success', message.data || 'Operation completed')
           setIsRunning(false)
           // Update operation result as completed
@@ -151,13 +179,14 @@ export function Operations() {
                 message: message.data || 'Operation completed successfully'
               }
               currentOperationRef.current = updated
+              // Save to history
+              saveToHistory(updated)
               return updated
             }
             return r
           }))
         },
         onError: (message) => {
-          console.log('[WebSocket] onError received:', message)
           addLog('error', message.data || 'Operation error')
           setIsRunning(false)
           // Update operation result as error
@@ -170,6 +199,8 @@ export function Operations() {
                 message: message.data || 'Operation failed'
               }
               currentOperationRef.current = updated
+              // Save to history
+              saveToHistory(updated)
               return updated
             }
             return r
