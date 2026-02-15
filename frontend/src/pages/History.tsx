@@ -63,9 +63,9 @@ export function History() {
   const getStatusIcon = (status: OperationResult['status']) => {
     switch (status) {
       case 'success':
-        return <CheckCircle className="w-5 h-5 text-green-600" />
+        return <CheckCircle className="w-5 h-5 text-primary" />
       case 'error':
-        return <XCircle className="w-5 h-5 text-red-600" />
+        return <XCircle className="w-5 h-5 text-destructive" />
       case 'running':
         return <Clock className="w-5 h-5 text-yellow-600 animate-pulse" />
       default:
@@ -76,9 +76,9 @@ export function History() {
   const getStatusBadge = (status: OperationResult['status']) => {
     switch (status) {
       case 'success':
-        return <span className="px-2 py-1 rounded text-xs font-medium bg-green-600 text-white">Success</span>
+        return <span className="px-2 py-1 rounded text-xs font-medium bg-primary text-primary-foreground">Success</span>
       case 'error':
-        return <span className="px-2 py-1 rounded text-xs font-medium bg-red-600 text-white">Failed</span>
+        return <span className="px-2 py-1 rounded text-xs font-medium bg-destructive text-destructive-foreground">Failed</span>
       case 'running':
         return <span className="px-2 py-1 rounded text-xs font-medium bg-yellow-600 text-white">Running</span>
       default:
@@ -182,9 +182,9 @@ export function History() {
                     <td className="px-4 py-3">{getStatusIcon(entry.status)}</td>
                     <td className="px-4 py-3">
                       <span className={`font-medium ${
-                        entry.type === 'PRE' ? 'text-blue-600' :
-                        entry.type === 'POST' ? 'text-orange-600' :
-                        'text-purple-600'
+                        entry.type === 'PRE' ? 'text-primary' :
+                        entry.type === 'POST' ? 'text-primary' :
+                        'text-primary'
                       }`}>
                         {entry.type}
                       </span>
@@ -214,7 +214,7 @@ export function History() {
                           className="p-1 rounded hover:bg-red-500/20 transition-colors"
                           title="Delete entry"
                         >
-                          <Trash2 className="w-4 h-4 text-red-600" />
+                          <Trash2 className="w-4 h-4 text-destructive" />
                         </button>
                       </div>
                     </td>

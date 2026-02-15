@@ -268,7 +268,7 @@ export function Operations() {
             onClick={() => setInputMode('manual')}
             className={`px-6 py-3 rounded-lg transition-colors font-medium ${
               inputMode === 'manual'
-                ? 'bg-green-600 text-white'
+                ? 'bg-primary text-primary-foreground'
                 : 'bg-accent text-foreground hover:bg-accent-hover'
             }`}
           >
@@ -278,7 +278,7 @@ export function Operations() {
             onClick={() => setInputMode('inventory')}
             className={`px-6 py-3 rounded-lg transition-colors font-medium ${
               inputMode === 'inventory'
-                ? 'bg-green-600 text-white'
+                ? 'bg-primary text-primary-foreground'
                 : 'bg-accent text-foreground hover:bg-accent-hover'
             }`}
           >
@@ -301,7 +301,7 @@ export function Operations() {
                 onChange={(e) => setDeviceIP(e.target.value)}
                 placeholder="172.27.200.200"
                 disabled={isRunning}
-                className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -313,7 +313,7 @@ export function Operations() {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="admin"
                 disabled={isRunning}
-                className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -325,7 +325,7 @@ export function Operations() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="•••••••"
                 disabled={isRunning}
-                className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
@@ -336,7 +336,7 @@ export function Operations() {
               value={selectedInventory}
               onChange={(e) => setSelectedInventory(e.target.value)}
               disabled={isRunning}
-              className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="">-- Select Inventory --</option>
               {inventories.map((inv) => (
@@ -368,7 +368,7 @@ export function Operations() {
                   checked={selectedTests.includes(test.name)}
                   onChange={() => handleTestToggle(test.name)}
                   disabled={isRunning}
-                  className="w-4 h-4 rounded border-accent text-green-600 focus:ring-green-500"
+                  className="w-4 h-4 rounded border-accent text-primary focus:ring-primary"
                 />
                 <span className="text-foreground">{test.name}</span>
               </label>
@@ -386,8 +386,8 @@ export function Operations() {
             disabled={isRunning}
             className={`flex-1 min-w-[150px] px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${
               selectedOperation === 'PRE' && isRunning
-                ? 'bg-green-700 text-white animate-pulse'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                ? 'bg-primary text-primary-foreground animate-pulse'
+                : 'bg-primary hover:opacity-90 text-primary-foreground'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <Play className="w-5 h-5" />
@@ -399,8 +399,8 @@ export function Operations() {
             disabled={isRunning}
             className={`flex-1 min-w-[150px] px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${
               selectedOperation === 'POST' && isRunning
-                ? 'bg-green-700 text-white animate-pulse'
-                : 'bg-orange-600 hover:bg-orange-700 text-white'
+                ? 'bg-primary text-primary-foreground animate-pulse'
+                : 'bg-primary hover:opacity-90 text-primary-foreground'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <Play className="w-5 h-5" />
@@ -412,8 +412,8 @@ export function Operations() {
             disabled={isRunning}
             className={`flex-1 min-w-[150px] px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${
               selectedOperation === 'CHECK' && isRunning
-                ? 'bg-green-700 text-white animate-pulse'
-                : 'bg-purple-600 hover:bg-purple-700 text-white'
+                ? 'bg-primary text-primary-foreground animate-pulse'
+                : 'bg-secondary hover:opacity-90 text-secondary-foreground'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <CheckCircle className="w-5 h-5" />
@@ -431,10 +431,10 @@ export function Operations() {
       {/* Connection Status */}
       {isRunning && (
         <div className={`border rounded-lg p-4 flex items-center space-x-3 ${
-          wsConnected ? 'border-green-500 bg-green-500/10' : 'border-yellow-500 bg-yellow-500/10'
+          wsConnected ? 'border-primary bg-primary/10' : 'border-yellow-500 bg-yellow-500/10'
         }`}>
           <div className={`w-3 h-3 rounded-full ${
-            wsConnected ? 'bg-green-500 animate-pulse' : 'bg-yellow-500 animate-ping'
+            wsConnected ? 'bg-primary animate-pulse' : 'bg-yellow-500 animate-ping'
           }`}></div>
           <span className="text-sm font-medium text-foreground">
             {wsConnected ? 'Connected - Receiving live updates' : 'Connecting to device...'}
@@ -449,7 +449,7 @@ export function Operations() {
             <h3 className="text-lg font-semibold text-foreground">Operation Logs</h3>
             {isRunning && (
               <div className="flex items-center space-x-2 text-sm text-foreground opacity-70">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
                 <span>Live</span>
               </div>
             )}
@@ -459,8 +459,8 @@ export function Operations() {
               <div
                 key={idx}
                 className={`mb-1 leading-relaxed ${
-                  log.type === 'error' ? 'text-red-500' :
-                  log.type === 'success' ? 'text-green-600' :
+                  log.type === 'error' ? 'text-destructive' :
+                  log.type === 'success' ? 'text-primary' :
                   'text-foreground'
                 }`}
               >
