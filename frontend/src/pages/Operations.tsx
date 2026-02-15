@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Play, CheckCircle } from 'lucide-react'
+import { Play, CheckCircle, Camera, GitCompare, Database, FolderOpen, Server, User, Lock, AlertCircle } from 'lucide-react'
 import { api, WebSocketClient } from '@/lib/api'
 import type { InventoryFile, TestFile } from '@/lib/api'
 import { ResultsCard, type OperationResult, type OperationStatus } from '@/components/ResultsCard'
@@ -260,172 +260,295 @@ export function Operations() {
         </p>
       </div>
 
-      {/* Input Mode Selection */}
-      <div className="bg-muted border border-accent rounded-lg p-4">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Connection Mode</h3>
-        <div className="flex gap-4">
-          <button
-            onClick={() => setInputMode('manual')}
-            className={`px-6 py-3 rounded-lg transition-colors font-medium ${
-              inputMode === 'manual'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-accent text-foreground hover:bg-accent-hover'
-            }`}
-          >
-            Manual Entry
-          </button>
-          <button
-            onClick={() => setInputMode('inventory')}
-            className={`px-6 py-3 rounded-lg transition-colors font-medium ${
-              inputMode === 'inventory'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-accent text-foreground hover:bg-accent-hover'
-            }`}
-          >
-            From Inventory
-          </button>
+      {/* Connection Details & Test Selection - Side by Side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Connection Details */}
+        <div className="bg-muted border border-accent rounded-lg p-6">
+          {/* Integrated Mode Selector */}
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-foreground">Connection</h3>
+            <div className="flex items-center bg-accent rounded-lg p-1">
+              <button
+                onClick={() => setInputMode('manual')}
+                disabled={isRunning}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  inputMode === 'manual'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-foreground hover:bg-accent-hover'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <Database className="w-4 h-4" />
+                <span>Manual</span>
+              </button>
+              <button
+                onClick={() => setInputMode('inventory')}
+                disabled={isRunning}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  inputMode === 'inventory'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-foreground hover:bg-accent-hover'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <FolderOpen className="w-4 h-4" />
+                <span>Inventory</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Connection Content with Animated Transition */}
+          <div className="relative min-h-[200px]">
+            <div className={`transition-all duration-300 ${
+              inputMode === 'manual' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-20px] absolute'
+            }`}>
+              {inputMode === 'manual' && (
+                <div className="space-y-4">
+                  <div className="group">
+                    <label className="flex items-center space-x-2 text-sm font-medium text-foreground mb-2">
+                      <Server className="w-4 h-4 text-primary" />
+                      <span>Device IP Address</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={deviceIP}
+                      onChange={(e) => setDeviceIP(e.target.value)}
+                      placeholder="172.27.200.200"
+                      disabled={isRunning}
+                      className="w-full px-4 py-3 bg-background border-2 border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                    />
+                  </div>
+
+                  <div className="group">
+                    <label className="flex items-center space-x-2 text-sm font-medium text-foreground mb-2">
+                      <User className="w-4 h-4 text-primary" />
+                      <span>Username</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="admin"
+                      disabled={isRunning}
+                      className="w-full px-4 py-3 bg-background border-2 border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                    />
+                  </div>
+
+                  <div className="group">
+                    <label className="flex items-center space-x-2 text-sm font-medium text-foreground mb-2">
+                      <Lock className="w-4 h-4 text-primary" />
+                      <span>Password</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="•••••••"
+                      disabled={isRunning}
+                      className="w-full px-4 py-3 bg-background border-2 border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className={`transition-all duration-300 ${
+              inputMode === 'inventory' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[20px] absolute'
+            }`}>
+              {inputMode === 'inventory' && (
+                <div className="space-y-4">
+                  <div className="group">
+                    <label className="flex items-center space-x-2 text-sm font-medium text-foreground mb-2">
+                      <FolderOpen className="w-4 h-4 text-primary" />
+                      <span>Select Inventory File</span>
+                    </label>
+                    <select
+                      value={selectedInventory}
+                      onChange={(e) => setSelectedInventory(e.target.value)}
+                      disabled={isRunning}
+                      className="w-full px-4 py-3 bg-background border-2 border-accent rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="">-- Select Inventory --</option>
+                      {inventories.map((inv) => (
+                        <option key={inv.name} value={inv.name}>
+                          {inv.name}
+                        </option>
+                      ))}
+                    </select>
+                    {inventories.length === 0 && (
+                      <p className="text-sm text-foreground opacity-70 mt-2 flex items-center space-x-2">
+                        <AlertCircle className="w-4 h-4" />
+                        <span>No inventory files available</span>
+                      </p>
+                    )}
+                  </div>
+
+                  {inventories.length > 0 && selectedInventory && (
+                    <div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
+                      <div className="flex items-center space-x-2 text-sm text-primary">
+                        <CheckCircle className="w-5 h-5" />
+                        <span className="font-medium">Selected: {selectedInventory}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Test Selection */}
+        <div className="bg-muted border border-accent rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Select Tests</h3>
+          <p className="text-sm text-foreground opacity-70 mb-4">Choose one or more tests to run</p>
+
+          {availableTests.length === 0 ? (
+            <p className="text-foreground opacity-70">No test files available</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {availableTests.map((test) => (
+                <button
+                  key={test.name}
+                  onClick={() => handleTestToggle(test.name)}
+                  disabled={isRunning}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    selectedTests.includes(test.name)
+                      ? 'bg-primary text-primary-foreground shadow-md'
+                      : 'bg-accent text-foreground hover:bg-accent-hover border border-accent'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  type="button"
+                >
+                  <div className="flex items-center space-x-2">
+                    {selectedTests.includes(test.name) && (
+                      <CheckCircle className="w-4 h-4" />
+                    )}
+                    <span>{test.name.replace('.yaml', '')}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Connection Details */}
+      {/* Operation Cards */}
       <div className="bg-muted border border-accent rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Connection Details</h3>
-
-        {inputMode === 'manual' ? (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Device IP Address</label>
-              <input
-                type="text"
-                value={deviceIP}
-                onChange={(e) => setDeviceIP(e.target.value)}
-                placeholder="172.27.200.200"
-                disabled={isRunning}
-                className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-foreground">Run Operation</h3>
+          {selectedTests.length > 0 && (
+            <div className="flex items-center space-x-2 text-sm text-primary">
+              <CheckCircle className="w-4 h-4" />
+              <span className="font-medium">{selectedTests.length} test{selectedTests.length !== 1 ? 's' : ''} selected</span>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Username</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="admin"
-                disabled={isRunning}
-                className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="•••••••"
-                disabled={isRunning}
-                className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground placeholder:text-foreground opacity-50 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-          </div>
-        ) : (
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Select Inventory File</label>
-            <select
-              value={selectedInventory}
-              onChange={(e) => setSelectedInventory(e.target.value)}
-              disabled={isRunning}
-              className="w-full px-4 py-2 bg-background border border-accent rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="">-- Select Inventory --</option>
-              {inventories.map((inv) => (
-                <option key={inv.name} value={inv.name}>
-                  {inv.name}
-                </option>
-              ))}
-            </select>
-            {inventories.length === 0 && (
-              <p className="text-sm text-foreground opacity-70 mt-2">No inventory files available</p>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Test Selection */}
-      <div className="bg-muted border border-accent rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Select Tests</h3>
-        <p className="text-sm text-foreground opacity-70 mb-4">Choose one or more tests to run</p>
-
-        {availableTests.length === 0 ? (
-          <p className="text-foreground opacity-70">No test files available</p>
-        ) : (
-          <div className="space-y-2 max-h-60 overflow-y-auto">
-            {availableTests.map((test) => (
-              <label key={test.name} className="flex items-center space-x-3 p-2 hover:bg-accent rounded cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={selectedTests.includes(test.name)}
-                  onChange={() => handleTestToggle(test.name)}
-                  disabled={isRunning}
-                  className="w-4 h-4 rounded border-accent text-primary focus:ring-primary"
-                />
-                <span className="text-foreground">{test.name}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Operation Buttons */}
-      <div className="bg-muted border border-accent rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Run Operation</h3>
-        <div className="flex flex-wrap gap-4">
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* PRE Operation Card */}
           <button
             onClick={() => runOperation('PRE')}
             disabled={isRunning}
-            className={`flex-1 min-w-[150px] px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${
+            className={`relative p-6 rounded-xl border-2 transition-all duration-300 text-left group ${
               selectedOperation === 'PRE' && isRunning
-                ? 'bg-primary text-primary-foreground animate-pulse'
-                : 'bg-primary hover:opacity-90 text-primary-foreground'
+                ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20'
+                : 'border-accent bg-card hover:border-primary hover:shadow-lg hover:shadow-primary/10'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            <Play className="w-5 h-5" />
-            <span>Start PRE</span>
+            {selectedOperation === 'PRE' && isRunning && (
+              <div className="absolute top-4 right-4">
+                <div className="w-2 h-2 bg-primary rounded-full animate-ping"></div>
+              </div>
+            )}
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-3 rounded-lg bg-primary/20 text-primary">
+                <Camera className="w-6 h-6" />
+              </div>
+              {selectedOperation === 'PRE' && isRunning ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium text-primary">Running</span>
+                </div>
+              ) : (
+                <div className="w-2 h-2 rounded-full bg-accent group-hover:bg-primary transition-colors"></div>
+              )}
+            </div>
+            <h4 className="text-lg font-bold text-card-foreground mb-1">PRE Snapshot</h4>
+            <p className="text-sm text-card-foreground opacity-70 mb-3">Capture device state before changes</p>
+            <div className="flex items-center space-x-1 text-xs text-card-foreground opacity-50">
+              <Play className="w-3 h-3" />
+              <span>Click to run</span>
+            </div>
           </button>
 
+          {/* POST Operation Card */}
           <button
             onClick={() => runOperation('POST')}
             disabled={isRunning}
-            className={`flex-1 min-w-[150px] px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${
+            className={`relative p-6 rounded-xl border-2 transition-all duration-300 text-left group ${
               selectedOperation === 'POST' && isRunning
-                ? 'bg-primary text-primary-foreground animate-pulse'
-                : 'bg-primary hover:opacity-90 text-primary-foreground'
+                ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20'
+                : 'border-accent bg-card hover:border-primary hover:shadow-lg hover:shadow-primary/10'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            <Play className="w-5 h-5" />
-            <span>Start POST</span>
+            {selectedOperation === 'POST' && isRunning && (
+              <div className="absolute top-4 right-4">
+                <div className="w-2 h-2 bg-primary rounded-full animate-ping"></div>
+              </div>
+            )}
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-3 rounded-lg bg-orange-500/20 text-orange-500">
+                <Camera className="w-6 h-6" />
+              </div>
+              {selectedOperation === 'POST' && isRunning ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium text-orange-500">Running</span>
+                </div>
+              ) : (
+                <div className="w-2 h-2 rounded-full bg-accent group-hover:bg-orange-500 transition-colors"></div>
+              )}
+            </div>
+            <h4 className="text-lg font-bold text-card-foreground mb-1">POST Snapshot</h4>
+            <p className="text-sm text-card-foreground opacity-70 mb-3">Capture device state after changes</p>
+            <div className="flex items-center space-x-1 text-xs text-card-foreground opacity-50">
+              <Play className="w-3 h-3" />
+              <span>Click to run</span>
+            </div>
           </button>
 
+          {/* CHECK Operation Card */}
           <button
             onClick={() => runOperation('CHECK')}
             disabled={isRunning}
-            className={`flex-1 min-w-[150px] px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 ${
+            className={`relative p-6 rounded-xl border-2 transition-all duration-300 text-left group ${
               selectedOperation === 'CHECK' && isRunning
-                ? 'bg-primary text-primary-foreground animate-pulse'
-                : 'bg-secondary hover:opacity-90 text-secondary-foreground'
+                ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20'
+                : 'border-accent bg-card hover:border-primary hover:shadow-lg hover:shadow-primary/10'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            <CheckCircle className="w-5 h-5" />
-            <span>CHECK</span>
+            {selectedOperation === 'CHECK' && isRunning && (
+              <div className="absolute top-4 right-4">
+                <div className="w-2 h-2 bg-primary rounded-full animate-ping"></div>
+              </div>
+            )}
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-3 rounded-lg bg-blue-500/20 text-blue-500">
+                <GitCompare className="w-6 h-6" />
+              </div>
+              {selectedOperation === 'CHECK' && isRunning ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium text-blue-500">Running</span>
+                </div>
+              ) : (
+                <div className="w-2 h-2 rounded-full bg-accent group-hover:bg-blue-500 transition-colors"></div>
+              )}
+            </div>
+            <h4 className="text-lg font-bold text-card-foreground mb-1">COMPARE</h4>
+            <p className="text-sm text-card-foreground opacity-70 mb-3">Compare pre/post snapshots</p>
+            <div className="flex items-center space-x-1 text-xs text-card-foreground opacity-50">
+              <GitCompare className="w-3 h-3" />
+              <span>Click to run</span>
+            </div>
           </button>
         </div>
-
-        {selectedTests.length > 0 && (
-          <p className="text-sm text-foreground opacity-70 mt-4">
-            {selectedTests.length} test{selectedTests.length !== 1 ? 's' : ''} selected
-          </p>
-        )}
       </div>
 
       {/* Connection Status */}
