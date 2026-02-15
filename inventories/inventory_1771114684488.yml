@@ -1,0 +1,8 @@
+SRX:
+  - 172.27.200.200:
+      username: admin
+      passwd: manolis1
+  - 172.27.200.201:
+      username: admin
+      passwd: manolis1
+
