@@ -28,7 +28,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/app/backend
+      # Container needs direct network access for NETCONF connections
       - ./snapshots:/app/snapshots
       - ./config:/app/config
       - ./testfiles:/app/testfiles
